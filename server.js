@@ -37,15 +37,16 @@ app.get('/polls/:id', (req, res) => {
 	// console.log(req.params.id);
 	// res.send('got a poll!');	
 	var id = req.params.id;
+	var notFound = true;
 	polls.forEach((poll) => {
 		if (poll.id.toString() === id) {
-			res.render('polls/show', { poll })
-		} else {
-			res.status(404);
+			notFound = false;
+			res.render('polls/show', { poll });
 		}
-	});
-
-
+	}); 
+	if (notFound) {
+		res.sendStatus(404);
+	}
 }); 
 
 
