@@ -5,14 +5,15 @@
 
 		<h3> Voting App: View, Vote, Make a Poll </h3>
 		<br />
-		<p> Select a poll to see the results and vote, or sign-in to make a new poll. </p>
-		<ul>
-			<li> Add text </li>
-			<li> List all polls</li>
-		</ul>
+		<p> Select a poll to see the results and vote, or <a href="/login">sign-in</a> to make a new poll. </p>
+		<hr />
+
+		<% polls.forEach((poll) => { %>
+			<li> <a href="/polls/<%= poll.id %>"> <%= poll.title %> </a> </li>
+		<% }); %>
 
 		<br />		
-		<br /><a href='/mypolls'>Go to My Polls</a>	
+		<br />Go to <a href='/mypolls'> My Polls </a>	
 
 	</div>
 

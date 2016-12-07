@@ -1,0 +1,10 @@
+RESTFUL ROUTES
+
+name		url		verb		description
+==========================================================
+INDEX		/polls		GET		display all polls
+SHOW		/polls/:id 	GET		shows a specific poll
+
+
+
+

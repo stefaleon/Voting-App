@@ -1,0 +1,16 @@
+<% include ../partials/header %>
+
+<div class="container text-center">
+		
+	<h2> <%= poll.title %> </h2>	
+	<hr />
+	<% poll.options.forEach((option) => { %>
+		<button> <%= option %></button>
+	<% }); %>	
+	
+</div> <!-- /container -->
+
+
+<% include ../partials/footer %>
+
+	

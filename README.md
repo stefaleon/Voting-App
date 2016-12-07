@@ -1,51 +1,8 @@
-## Voting App v.0.0.1
-
-* Install dependencies
-
-      "ejs": "^2.5.5",
-      "express": "^4.14.0"
-
-* Require express and assign it to app
- 
-      const express = require('express');
-      const app = express();
-
-* Set view engine to EJS
- 
-      app.set('view engine', 'ejs');
-
-* Use public folder for static files 
- 
-      app.use(express.static(__dirname + '/public'));
-
-* Set a proper port for the app to listen on
- 
-      const PORT = process.env.PORT || 3000;
-
-      app.listen(PORT, process.env.IP, () => {
-      console.log('Server started on port', PORT); 
-      });
-
-* Configure partial files in views, navbar in header 
-* Configure dummy main.ejs and mypolls.ejs
-* Apply basic bootstrap styling
-* Finally add a couple of dummy routes
-
-      // main route
-      app.get('/', (req, res) => {
-      	 res.render('main');
-      });
-      
-      // list my polls
-      app.get('/mypolls', (req, res) => {
-      	res.render('mypolls');
-      }); 
-
-
-
+## Voting App
 
 &nbsp;
-
+  
+  
 ### User Stories
 
 All users can 
@@ -66,5 +23,3 @@ Authenticated users can
 
 * Express
 * EJS
- 
-  
