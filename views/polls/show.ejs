@@ -22,7 +22,8 @@
 			<option disabled selected>Cast a vote for...</option>
 			<% poll.options.forEach((option) => { %>			
 	  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
-			<% }); %>				
+			<% }); %>
+			<option value="newOption">Add a new option</option>				
 			<input type="submit" class="btn btn-success" id="voteInput"> 
 		</select>
     </form>

@@ -56,12 +56,17 @@ app.get('/polls/:id', (req, res) => {
   					option.opVotes += 1;  					
   				}
   			});
-			res.render('polls/show', { poll });
+  			if (req.query.choice === 'newOption') { 
+  				// show a new option add form
+  				res.send('add new option'); 							  		
+		  	} else {
+		  		res.render('polls/show', { poll });
+		  	}			
 		}
 	}); 
 	if (notFound) {
 		res.sendStatus(404);
-	}
+	}	
 }); 
 
 
