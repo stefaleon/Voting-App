@@ -12,6 +12,18 @@
   font-size: 1.1em;
 }
 
+ /* option name in show.ejs */
+#optionSpan {
+	font-size: 1.6em;
+}
+
+#voteSelect, #voteInput {
+	font-size: 1.1em;
+	margin: 0.5em;
+	background-color: #fff;
+	color: #000;
+}
+
 footer {
 	font-size: 0.8em;
 }

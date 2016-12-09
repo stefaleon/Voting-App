@@ -5,21 +5,32 @@ const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 
-
 app.use(express.static(__dirname + '/public'));
+
 
 var polls = [{
 	id: 1,
 	title: 'black or white?',
-	options: ['black', 'white']
+	options: [
+		{opId: '1', opName: 'black', opVotes: 3},
+		{opId: '2', opName: 'white', opVotes: 2}
+		]
 	}, {
 	id: 2,
 	title: 'best music artist?',
-	options: ['Metallica', 'Justin Bieber', 'Rick Astley']
+	options: [
+		{opId: '1', opName: 'Metallica', opVotes: 45}, 
+		{opId: '2', opName: 'Justin Bieber', opVotes: 68},
+		{opId: '3', opName: 'Rick Astley', opVotes: 231}
+		]
 	}, {
 	id: 3,
 	title: 'cat or mouse?',
-	options: ['cat', 'mouse', 'dog']
+	options: [
+		{opId: '1', opName: 'cat', opVotes: 1327},
+		{opId: '2', opName: 'mouse', opVotes: 2868},
+		{opId: '3', opName: 'dog', opVotes: 1145}
+		]
 	}];
 
 // main route
@@ -34,13 +45,17 @@ app.get('/polls', (req, res) => {
 
 // SHOW - shows a specific poll
 app.get('/polls/:id', (req, res) => {
-	// console.log(req.params.id);
-	// res.send('got a poll!');	
 	var id = req.params.id;
 	var notFound = true;
 	polls.forEach((poll) => {
 		if (poll.id.toString() === id) {
-			notFound = false;
+			notFound = false;			
+  			// if req.query.choice is a valid opId, then increase votes by one   			
+  			poll.options.forEach((option) => {  	  				
+  				if (req.query.choice === option.opId) {  					
+  					option.opVotes += 1;  					
+  				}
+  			});
 			res.render('polls/show', { poll });
 		}
 	}); 

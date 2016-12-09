@@ -3,10 +3,30 @@
 <div class="container text-center">
 		
 	<h2> <%= poll.title %> </h2>	
+
 	<hr />
+
 	<% poll.options.forEach((option) => { %>
-		<button> <%= option %></button>
+		<p> 		    	
+	    	<span id="optionSpan">
+	    		<%= option.opName %>
+	    	</span>
+	    	 has been voted <%= option.opVotes %> times
+	   	</p>
 	<% }); %>	
+
+	<hr />
+	
+	<form >
+		<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
+			<option disabled selected>Cast a vote for...</option>
+			<% poll.options.forEach((option) => { %>			
+	  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
+			<% }); %>				
+			<input type="submit" class="btn btn-success" id="voteInput"> 
+		</select>
+    </form>
+	
 	
 </div> <!-- /container -->
 
