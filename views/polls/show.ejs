@@ -1,6 +1,14 @@
 <% include ../partials/header %>
 
 <div class="container text-center">
+
+<div class="col-sm-1"></div>
+
+<div class="col-sm-6">
+    <canvas id="myChart" width="400" height="400"></canvas>
+</div>   
+
+<div class="col-sm-4">
 		
 	<h2> <%= poll.title %> </h2>	
 
@@ -36,8 +44,66 @@
 			</select>
 	    </form>
 	<% } %>	
+
+</div>
+
+<div class="col-sm-1"></div>
+
 	
 </div> <!-- /container -->
+
+<script>
+    // Random Hex Color Code Generator in JavaScript
+    // Paul Irish, alman, nlogax, and temp01
+    // 16777215 == ffffff in decimal
+    // source: https://www.paulirish.com/2009/random-hex-color-code-snippets/ 
+    function randomHexColorCodeGenerator(){        
+        return '#'+Math.floor(Math.random()*16777215).toString(16);
+    }
+
+    // get the poll options from the "poll" object passed by the server
+    var pollOptions = <%- JSON.stringify(poll.options) %>
+    console.log(pollOptions);
+        
+    // prepare the chart data
+    var labels = [];
+    var votes = [];
+    var backgroundColor = [];
+    var borderColor = [];
+    pollOptions.forEach((option) => {
+        console.log(option.opName, option.opVotes);
+        labels.push(option.opName);
+        votes.push(option.opVotes);
+        backgroundColor.push(randomHexColorCodeGenerator());
+        borderColor.push(randomHexColorCodeGenerator());
+    });
+    console.log(backgroundColor);
+    
+    // instantiate a bar chart    
+    var ctx = document.getElementById("myChart");
+    var pollChart = new Chart(ctx, {
+        type:'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label:"Number of Votes",
+                data: votes,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+</script>
 
 
 <% include ../partials/footer %>
