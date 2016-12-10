@@ -1,97 +1,89 @@
-## Voting App v.0.0.3
+## Voting App v.0.0.4
 
-* Transform polls.options property to array of objects. Each options object has now three properties, an id string, a name string and a votes number.
-
-```
-    var polls = [{
-          id: 1,
-          title: 'black or white?',
-          options: [
-            {opId: '1', opName: 'black', opVotes: 3},
-            {opId: '2', opName: 'white', opVotes: 2}
-            ]
-          }, {
-          id: 2,
-          title: 'best music artist?',
-          options: [
-            {opId: '1', opName: 'Metallica', opVotes: 45}, 
-            {opId: '2', opName: 'Justin Bieber', opVotes: 68},
-            {opId: '3', opName: 'Rick Astley', opVotes: 231}
-            ]
-          }, {
-          id: 3,
-          title: 'cat or mouse?',
-          options: [
-            {opId: '1', opName: 'cat', opVotes: 1327},
-            {opId: '2', opName: 'mouse', opVotes: 2868},
-            {opId: '3', opName: 'dog', opVotes: 1145}
-            ]
-          }];
-```
-
-* In views/polls/show.ejs the votes number is displayed next to the respective poll option.
+* Add the *POST* route, which creates new polls.
 
 ```
-      <% poll.options.forEach((option) => { %>
-        <p>           
-          <span id="optionSpan">
-            <%= option.opName %>
-          </span>
-            has been voted <%= option.opVotes %> times
-        </p>
-      <% }); %>
+// CREATE - create new poll
+app.post('/polls', (req, res) => {
+	res.send('This is the POST route');
+});
 ```
 
-* A form containing a dropdown selection menu initiates the voting of the selected option by assigning the option id to the selection option value. The select name is "choice". An "add option" option is included before the submit type input.
-
-
-```
-      <form >
-        <select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
-          <option disabled selected>Cast a vote for...</option>
-          <% poll.options.forEach((option) => { %>      
-              <option value="<%= option.opId %>"> <%= option.opName %> </option>
-          <% }); %>
-          <option value="newOption">Add a new option</option>       
-          <input type="submit" class="btn btn-success" id="voteInput"> 
-        </select>
-      </form>     
-      
-```
-
-* The selected option id is now available via the req.query.choice property in the request object. Control logic is added to the SHOW route in order to increase the vote count for the respective poll option. A check for "new option" query is also added before the "show poll" view is rendered.
+* Install, require and use *body-parser*.
 
 ```
-// SHOW - shows a specific poll
-app.get('/polls/:id', (req, res) => {
-  var id = req.params.id;
-  var notFound = true;
-  polls.forEach((poll) => {
-    if (poll.id.toString() === id) {
-      notFound = false;     
-        // if req.query.choice is a valid opId, then increase votes by one        
-        poll.options.forEach((option) => {              
-          if (req.query.choice === option.opId) {           
-            option.opVotes += 1;            
-          }
-        });
-        if (req.query.choice === 'newOption') { 
-          // show a new option add form
-          res.send('add new option');                     
-        } else {
-          res.render('polls/show', { poll });
-        }     
-    }
-  }); 
-  if (notFound) {
-    res.sendStatus(404);
-  } 
-}); 
+$ npm install body-parser --save
 ```
+```
+const bodyParser = require('body-parser');
+```
+```
+app.use(bodyParser.urlencoded({extended: true}));
+```
+
+* Add the *NEW* route, which shows a form to create a new poll.
+
+```
+// NEW - show form to create new poll
+app.get('/newpoll', (req, res) => {
+	res.render('polls/new');
+});
+```
+Due to a conflict with the current configuration of the *SHOW* route, the RESTful convention has to be bypassed and the route is set to */newpoll* instead of */polls/new*.
+
+* Configure the */views/polls/new.ejs* file, which will be rendered by the *NEW* route. This contains the following form:
+
+```
+<form action="/polls" method="POST">
+	<div class="form-group">
+		<input type="text" name="pTitle" class="form-control"
+			placeholder="poll title" required/>
+	</div>			
+	<div class="form-group ">
+		<label>Enter poll options in the textarea below. Separate with new line.</label>
+		<textarea type="text" rows=10 name="pOptions" 
+			class="form-control" required></textarea>	
+	</div>		
+	<div class="form-group">
+		<input type="submit" value="Add" class="btn btn-success btn-block"/>
+	</div>		
+</form>
+```
+When a *POST* is made, the request object will contain the *req.body.pTitle* and *req.body.pOptions* properties, which can be accessed via *body-parser*.
+
+* Now the *CREATE* route can be edited as below:
+
+```
+// CREATE - create new poll
+app.post('/polls', (req, res) => {
+	console.log(req.body);
+	var newOptionsNames = req.body.pOptions.split('\n');
+	console.log(newOptionsNames);
+	var newOptions = [];
+	var newOpId = 0;
+	newOptionsNames.forEach((newOpName) => {
+		newOpId += 1;
+		newOptions.push({
+			opId: newOpId.toString(),
+			opName: newOpName,
+			opVotes: 0
+		})
+	});
+	var newPoll = {
+		id: polls.length + 1,
+		title: req.body.pTitle,
+		options: newOptions
+	}
+	polls.push(newPoll);
+	res.redirect('/polls');
+});
+```
+The posted *req.body* properties are used to create a new poll object, which is subsequently pushed to the *polls* array.
+The route redirects to the */polls* route, where the new poll object can be seen and used, as long as the server is not restarted. A database will be introduced for data persistance.
+
 
 
 &nbsp;
-  
   
 ### Final Project User Stories
 
@@ -113,3 +105,4 @@ Authenticated users can
 
 * Express
 * EJS
+* body-parser

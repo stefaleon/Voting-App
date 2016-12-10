@@ -4,6 +4,8 @@ name		url		verb		description
 ==========================================================
 INDEX		/polls		GET		display all polls
 SHOW		/polls/:id 	GET		shows a specific poll
+NEW		/newpoll		GET		show form to create new poll
+CREATE   	/polls		POST		create new poll
 
 
 

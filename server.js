@@ -1,12 +1,12 @@
 const express = require('express');
 const app = express();
-
 const PORT = process.env.PORT || 3000;
+const bodyParser = require('body-parser');
 
 app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'));
-
+app.use(bodyParser.urlencoded({extended: true}));
 
 var polls = [{
 	id: 1,
@@ -68,6 +68,35 @@ app.get('/polls/:id', (req, res) => {
 		res.sendStatus(404);
 	}	
 }); 
+
+// CREATE - create new poll
+app.post('/polls', (req, res) => {
+	console.log(req.body);
+	var newOptionsNames = req.body.pOptions.split('\n');
+	console.log(newOptionsNames);
+	var newOptions = [];
+	var newOpId = 0;
+	newOptionsNames.forEach((newOpName) => {
+		newOpId += 1;
+		newOptions.push({
+			opId: newOpId.toString(),
+			opName: newOpName,
+			opVotes: 0
+		})
+	});
+	var newPoll = {
+		id: polls.length + 1,
+		title: req.body.pTitle,
+		options: newOptions
+	}
+	polls.push(newPoll);
+	res.redirect('/polls');
+});
+
+// NEW - show form to create new poll
+app.get('/newpoll', (req, res) => {	
+	res.render('polls/new');
+});
 
 
 // .... list my polls
