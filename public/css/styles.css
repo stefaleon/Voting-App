@@ -17,7 +17,7 @@
 	font-size: 1.6em;
 }
 
-#voteSelect, #voteInput {
+#voteSelect, .voteInput {
 	font-size: 1.1em;
 	margin: 0.5em;
 	background-color: #fff;

@@ -47,6 +47,22 @@ app.get('/polls', (req, res) => {
 app.get('/polls/:id', (req, res) => {
 	var id = req.params.id;
 	var notFound = true;
+	var customOption = false;
+
+	console.log(req.query);
+	if (req.query.newOptionNameEntered)	{
+		// add new option to options array in the appropriate poll
+		polls.forEach((poll) => {
+			if (poll.id.toString() === id) {
+				poll.options.push({
+					opId: (poll.options.length + 1).toString(),
+					opName: req.query.newOptionNameEntered,
+					opVotes: 1
+				});
+			}
+		});
+	}
+	
 	polls.forEach((poll) => {
 		if (poll.id.toString() === id) {
 			notFound = false;			
@@ -57,11 +73,12 @@ app.get('/polls/:id', (req, res) => {
   				}
   			});
   			if (req.query.choice === 'newOption') { 
-  				// show a new option add form
-  				res.send('add new option'); 							  		
+  				// show a new option add form instead of the dropdown in show.ejs
+  				customOption = true;						  		
 		  	} else {
-		  		res.render('polls/show', { poll });
-		  	}			
+		  		customOption = false;
+		  	}	
+		res.render('polls/show', { poll, customOption });  			
 		}
 	}); 
 	if (notFound) {

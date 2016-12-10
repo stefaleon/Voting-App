@@ -16,18 +16,26 @@
 	<% }); %>	
 
 	<hr />
-	
-	<form >
-		<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
-			<option disabled selected>Cast a vote for...</option>
-			<% poll.options.forEach((option) => { %>			
-	  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
-			<% }); %>
-			<option value="newOption">Add a new option</option>				
-			<input type="submit" class="btn btn-success" id="voteInput"> 
-		</select>
-    </form>
-	
+	<% if (customOption) { %>		
+		<h3>Cast a vote for...</h3>
+		<form>
+			<input name="newOptionNameEntered" 
+				placeholder="custom option" class="btn btn-default" id="voteSelect" />
+			<input type="submit" class="btn btn-success voteInput" value="Submit Vote"> 			
+	    </form>
+
+	<% } else { %>
+		<form>
+			<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
+				<option disabled selected>Cast a vote for...</option>
+				<% poll.options.forEach((option) => { %>			
+		  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
+				<% }); %>
+				<option value="newOption">Add a new option</option>				
+				<input type="submit" class="btn btn-success voteInput"> 
+			</select>
+	    </form>
+	<% } %>	
 	
 </div> <!-- /container -->
 
