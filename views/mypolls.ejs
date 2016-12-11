@@ -5,12 +5,16 @@
 
 		<h3> My Polls </h3>
 		<br />
-		<ul>
-			<li> Add a new poll </li>
-			<li> List my polls</li>
-		</ul>
-		<br />		
-		<br /><a href='/'>Back to main route</a>
+		
+		<p> <a href="/newpoll">Make a new poll. </a> </p>
+		<hr />
+		<% mypolls.forEach((poll) => { %>
+			<li> <a href="/polls/<%= poll.id %>"> <%= poll.title %> </a> </li>
+		<% }); %>			
+		
+		
+		<br />
+		<br /><a href='/'>See all polls.</a>
 
 	</div>
 

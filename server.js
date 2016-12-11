@@ -11,13 +11,17 @@ app.use(bodyParser.urlencoded({extended: true}));
 var polls = [{
 	id: 1,
 	title: 'black or white?',
+	user: 'Joe',
 	options: [
-		{opId: '1', opName: 'black', opVotes: 3},
-		{opId: '2', opName: 'white', opVotes: 2}
+		{opId: '1', opName: 'black', opVotes: 6},
+		{opId: '2', opName: 'white', opVotes: 2},
+		{opId: '3', opName: 'red', opVotes: 7},
+		{opId: '4', opName: 'green', opVotes: 3}
 		]
 	}, {
 	id: 2,
 	title: 'best music artist?',
+	user: 'Jack',
 	options: [
 		{opId: '1', opName: 'Metallica', opVotes: 45}, 
 		{opId: '2', opName: 'Justin Bieber', opVotes: 68},
@@ -26,6 +30,7 @@ var polls = [{
 	}, {
 	id: 3,
 	title: 'cat or mouse?',
+	user: 'Averel',
 	options: [
 		{opId: '1', opName: 'cat', opVotes: 1327},
 		{opId: '2', opName: 'mouse', opVotes: 2868},
@@ -96,7 +101,7 @@ app.post('/polls', (req, res) => {
 	newOptionsNames.forEach((newOpName) => {
 		newOpId += 1;
 		newOptions.push({
-			opId: newOpId.toString(),
+			opId: newOpId.toString(),			
 			opName: newOpName,
 			opVotes: 0
 		})
@@ -104,6 +109,7 @@ app.post('/polls', (req, res) => {
 	var newPoll = {
 		id: polls.length + 1,
 		title: req.body.pTitle,
+		user: 'Averel',
 		options: newOptions
 	}
 	polls.push(newPoll);
@@ -116,9 +122,15 @@ app.get('/newpoll', (req, res) => {
 });
 
 
-// .... list my polls
+// list my polls -- actually Averel's polls for the time being
 app.get('/mypolls', (req, res) => {
-	res.render('mypolls');
+	var mypolls = [];
+	polls.forEach((poll) => {
+		if (poll.user === 'Averel') {
+				mypolls.push(poll);				
+			}
+		});
+	res.render('mypolls', { mypolls });
 });
 
 app.listen(PORT, process.env.IP, () => {
