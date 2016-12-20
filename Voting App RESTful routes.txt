@@ -1,11 +1,16 @@
-RESTFUL ROUTES
+RESTful routes
 
-name		url		verb		description
+CRUD		name		url		verb		description
 ==========================================================
-INDEX		/polls		GET		display all polls
-SHOW		/polls/:id 	GET		shows a specific poll
-NEW		/newpoll		GET		show form to create new poll
-CREATE   	/polls		POST		create new poll
+CREATE		CREATE   	/polls		POST		create new poll
+READ		INDEX		/polls		GET		display all polls
+READ		SHOW		/polls/:id 	GET		shows a specific poll
+READ		INDEX		/mypolls		GET		display current user's polls
+
+
+		NEW		/newpoll		GET		show form to create new poll
+
+
 
 
 
