@@ -3,21 +3,29 @@
 
 	<div class="container">
 
+	<div class="col-sm-2"></div>
+
+	<div class="col-sm-8">
+
 		<h3> Voting App: View, Vote, Make a Poll </h3>
 		<br />
+
+		<% if (!currentUser) { %>
 		<p> Select a poll to see the results and vote, or <a href="/login">sign-in</a> to make a new poll. </p>
+		<% } %>
+		<% if (currentUser) { %>
 		<p> Select a poll to see the results and vote, or <a href="/newpoll"> make a new poll </a>. </p>
+		<% } %>
+
 		<hr />
 
 		<% polls.forEach((poll) => { %>
 			<li> <a href="/polls/<%= poll.id %>"> <%= poll.title %> </a> </li>
 		<% }); %>
 
-		<br />		
-		<br />Go to <a href="/mypolls"> My Polls </a>	
-
 	</div>
+
+	</div><!-- /container -->
 
 
 <% include partials/footer %>
-

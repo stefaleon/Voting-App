@@ -1,5 +1,5 @@
-## Voting App v.1.0.3
-
+## Voting App v.1.0.4
+&nbsp;
 
 ## 1.0.1
 #### Configure *mongoose* and models
@@ -177,7 +177,7 @@ app.get('/polls/:id', (req, res) => {
 	});
 });
 ```
-
+&nbsp;
 ## 1.0.2
 #### Add the delete route
 
@@ -245,7 +245,7 @@ app.delete('/polls/:id', (req, res) => {
 	});
 });
 ```
-
+&nbsp;
 ## 1.0.3
 #### Authentication setup
 
@@ -391,6 +391,148 @@ app.get('/logout', (req, res) => {
 ```
 
 &nbsp;
+## 1.0.4
+#### Add authentication middleware
+
+* The function *isLoggedIn* is using the *passport* method *isAuthenticated* to check if a request is indeed authenticated.
+
+```
+function isLoggedIn(req, res, next) {
+	if (req.isAuthenticated()) {
+		return next();
+	}
+	res.redirect('/login');
+}
+```
+
+* It is consequently used as middleware in the *CREATE* and *DESTROY* routes.
+
+```
+// create a poll
+app.post('/polls', isLoggedIn, (req, res) => {
+    ...
+    ...
+
+// delete a poll
+app.delete('/polls/:id', isLoggedIn, (req, res) => {
+	...
+    ...    
+
+```
+
+It is also used as middleware in the new poll form showing and the *"my polls"* routes.
+
+```
+// new poll form
+app.get('/newpoll', isLoggedIn, (req, res) => {
+	res.render('polls/new');
+});
+
+// show my polls
+app.get('/mypolls', isLoggedIn, (req, res) => {
+	...
+	...
+```
+#### Update the *"new poll"* and *"my polls"* routes.
+* The *"create new poll"* route is edited, so that the current user is added to the new poll data.
+
+```
+// create a poll
+app.post('/polls', isLoggedIn, (req, res) => {
+	...
+	...
+	var newPoll = {
+		user: {
+			id: req.user._id,
+			username: req.user.username
+		},		
+		...
+		...
+```
+
+* The *"show my polls"* route is edited, so that it displays the polls of the current user.
+
+```
+// show my polls
+app.get('/mypolls', (req, res) => {
+	Poll.find({'user.id': req.user._id}, (err, mypolls) => {
+		...
+		...
+```
+
+#### Adjust views to *current user*
+
+* The navigation bar is modified in *views/partials/header.ejs*, so that the *Log In* and *Sign Up* tabs are displayed when there is not a logged-in user, while the logged-in user name and the *Log Out* tab are displayed otherwise.
+
+```
+<ul class="nav navbar-nav navbar-right">
+    <% if (!currentUser) { %>
+       <li><a href="/login">Log In</a></li>
+       <li><a href="/signup">Sign Up</a></li>
+    <% } else { %>
+       <li><a href="#"><strong><%= currentUser.username %></strong></a></li>
+       <li><a href="/logout">Log Out</a></li>
+    <% } %>
+</ul>
+```
+* More EJS logic is added in *views/partials/header.ejs* so that the *"My Polls"* tab is also displayed in the navigation bar only when a user is logged-in.
+
+```
+<% if (currentUser) { %>
+<div class="navbar-header">
+  <a class="navbar-brand" href="/mypolls"> My Polls </a>
+</div>
+<% } %>
+```
+
+* Also when a poll entry is displayed via *views/polls/show.ejs*, the *Delete* button, the *"new option"* choice and the aggregate poll results are displayed only when there is a logged-in user.
+
+```
+<% if (currentUser) { %>
+
+	<% if (!deletePoll) { %>
+		<form id='delete'>
+        ...
+        ...
+
+<% } %>
+```
+```
+<% if (currentUser) { %>
+	<option value="newOption">Add a new option</option>
+<% } %>
+```
+```
+<% if (currentUser) { %>
+	<% poll.options.forEach((option) => { %>
+		<p>
+			<span id="optionSpan">
+				<%= option.opName %>
+			</span>
+			 has been voted <%= option.opVotes %> times
+		</p>
+	<% }); %>
+	<hr />
+<% } %>
+```
+
+
+* Finally, modifications are made to *views/main.ejs* so that the text presented is relevant to the current user.
+
+```
+<% if (!currentUser) { %>
+<p> Select a poll to see the results and vote, or <a href="/login">sign-in</a> to make a new poll. </p>
+<% } %>
+<% if (currentUser) { %>
+<p> Select a poll to see the results and vote, or <a href="/newpoll"> make a new poll </a>. </p>
+<% } %>
+```
+
+
+
+
+
+&nbsp;
 
 ## Final Project User Stories
 
@@ -414,13 +556,24 @@ Authenticated users can
 * EJS
 * body-parser  
 
+&nbsp;
 * mongoose
 * method-override
 
+&nbsp;
 * express-session
 * passport
 * passport-local
 * passport-local-mongoose
 
+&nbsp;
 * bootstrap/3.3.7
 * Chart.js/2.4.0
+
+
+&nbsp;
+## TODO
+* authorization
+* flash messages
+* auth with email/fb/twitter...
+* vote once: auth/IP/local storage/cookies...

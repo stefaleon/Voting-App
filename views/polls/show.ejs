@@ -14,16 +14,19 @@
 
 	<hr />
 
-	<% poll.options.forEach((option) => { %>
-		<p>
-	    	<span id="optionSpan">
-	    		<%= option.opName %>
-	    	</span>
-	    	 has been voted <%= option.opVotes %> times
-	   	</p>
-	<% }); %>
+    <% if (currentUser) { %>
+    	<% poll.options.forEach((option) => { %>
+    		<p>
+    	    	<span id="optionSpan">
+    	    		<%= option.opName %>
+    	    	</span>
+    	    	 has been voted <%= option.opVotes %> times
+    	   	</p>
+    	<% }); %>
+        <hr />
+    <% } %>
 
-	<hr />
+
 	<% if (customOption) { %>
 		<h3>Cast a vote for...</h3>
 		<form>
@@ -39,7 +42,9 @@
 				<% poll.options.forEach((option) => { %>
 		  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
 				<% }); %>
-				<option value="newOption">Add a new option</option>
+                <% if (currentUser) { %>
+				    <option value="newOption">Add a new option</option>
+                <% } %>
 				<input type="submit" class="btn btn-success voteInput">
 			</select>
 	    </form>
@@ -52,6 +57,8 @@
 <hr />
 <div class="col-sm-12">
 <br />
+<% if (currentUser) { %>
+
     <% if (!deletePoll) { %>
 		<form id='delete'>
 			<button name="deletePushed" value="deletePoll" class="btn btn-danger">
@@ -65,6 +72,8 @@
 			</button>
 		</form>
 	<% } %>
+
+<% } %>
 </div>
 
 </div> <!-- /container -->

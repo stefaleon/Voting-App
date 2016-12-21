@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
 });
 
 // new poll form
-app.get('/newpoll', (req, res) => {
+app.get('/newpoll', isLoggedIn, (req, res) => {
 	res.render('polls/new');
 });
 
@@ -62,7 +62,8 @@ app.get('/newpoll', (req, res) => {
 // CREATE
 //=============================================================
 // create a poll
-app.post('/polls', (req, res) => {
+app.post('/polls', isLoggedIn, (req, res) => {
+	console.log('req.user', req.user);
 	var newOptionsNames = req.body.pOptions.split('\n');
 	var newOptions = [];
 	var newOpId = 0;
@@ -75,6 +76,10 @@ app.post('/polls', (req, res) => {
 		})
 	});
 	var newPoll = {
+		user: {
+			id: req.user._id,
+			username: req.user.username
+		},
 		title: req.body.pTitle,
 		options: newOptions
 	};
@@ -104,9 +109,9 @@ app.get('/polls', (req, res) => {
 	});
 });
 
-// show my polls, (temporarily admin's polls only)
-app.get('/mypolls', (req, res) => {
-	Poll.find({'user.username': 'admin'}, (err, mypolls) => {
+// show my polls
+app.get('/mypolls', isLoggedIn, (req, res) => {
+	Poll.find({'user.id': req.user._id}, (err, mypolls) => {
 		if (err) {
 			console.log(err);
 		} else {
@@ -169,7 +174,7 @@ app.get('/polls/:id', (req, res) => {
 // DESTROY
 //=============================================================
 // delete a poll
-app.delete('/polls/:id', (req, res) => {
+app.delete('/polls/:id', isLoggedIn, (req, res) => {
 	Poll.findByIdAndRemove(req.params.id, (err) => {
 		if (err) {
 			console.log(err);
@@ -224,6 +229,14 @@ app.get('/logout', (req, res) => {
 	res.redirect('/');
 });
 
+
+// authentication checking middleware
+function isLoggedIn(req, res, next) {
+	if (req.isAuthenticated()) {
+		return next();
+	}
+	res.redirect('/login');
+}
 
 
 app.listen(PORT, process.env.IP, () => {
