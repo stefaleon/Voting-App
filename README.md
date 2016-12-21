@@ -1,6 +1,46 @@
-## Voting App v.1.0.4
+## Voting App v.1.0.5
+
+## User Stories
+
+All users can
+* see and vote on everyone's polls.
+* see the results of polls in chart form.
+
+Authenticated users can
+* keep their polls and come back later to access them.
+* share their polls with their friends.
+* see the aggregate results of the polls.
+* create a poll with any number of possible items.
+* create a new option on a poll.
+
+Authorized users can
+* delete polls that they don't want anymore.
+
 &nbsp;
 
+## Current Stack
+
+* Express
+* EJS
+* body-parser  
+
+&nbsp;
+* mongoose
+* method-override
+
+&nbsp;
+* express-session
+* passport
+* passport-local
+* passport-local-mongoose
+
+&nbsp;
+* bootstrap/3.3.7
+* Chart.js/2.4.0
+
+
+
+&nbsp;
 ## 1.0.1
 #### Configure *mongoose* and models
 
@@ -528,52 +568,70 @@ app.get('/mypolls', (req, res) => {
 <% } %>
 ```
 
-
-
-
-
 &nbsp;
+## 1.0.5
 
-## Final Project User Stories
 
-All users can
-* see and vote on everyone's polls.
-* see the results of polls in chart form.
+* In *views/polls/show.ejs*, the user who made the addition is shown.
+```
+<% if (poll.user.username) { %>
+   <br /> <p> Added by: <%= poll.user.username %> </p>
+<% } %>
+```
+#### Add authorization
 
-Authenticated users can
-* keep their polls and come back later to access them.
-* share their polls with their friends.
-* see the aggregate results of their polls.
-* delete polls that they don't want anymore.
-* create a poll with any number of possible items.
-* create a new option on a poll.
+* In order to provide the functionality that users should only be able to delete the polls they added and not other users' additions, authorization checking middleware is required. The *checkAuthorization* function checks whether a user is logged in or not, just as *isLoggedIn* does, but on top of that it introduces the relevant authorization logic.
 
-&nbsp;
+```
+// authorization checking middleware
+// applicable deleting polls created by the logged-in user
+function checkAuthorization(req, res, next) {
+	// if user is authenticated (logged-in)
+	if (req.isAuthenticated()) {
+		// find the poll to check for authorization as well
+		Poll.findById(req.params.id, (err, foundPoll) => {
+			if (err) {
+				res.redirect('back');
+			} else {
+				// if current user is the one who added the poll
+				if (foundPoll.user.id && foundPoll.user.id.equals(req.user._id)) {
+					next();
+				} else {
+					res.redirect('back');
+				}
+			}
+		});
+	} else {
+		res.redirect('back');
+	}
+}
+```
 
-## Current Stack
+* The *checkAuthorization* middleware method replaces the *isLoggedIn* method in the *DESTROY* route.
 
-* Express
-* EJS
-* body-parser  
+```
+// delete a poll
+app.delete('/polls/:id', checkAuthorization, (req, res) => {
+	...
+```
+* For the UX improvement, in *views/polls/show.ejs*, the *Delete* button is displayed only for authorized users.
 
-&nbsp;
-* mongoose
-* method-override
+```
+<% if (currentUser && poll.user.id && poll.user.id.equals(currentUser._id)) ) { %>
 
-&nbsp;
-* express-session
-* passport
-* passport-local
-* passport-local-mongoose
+    <% if (!deletePoll) { %>
+		<form id='delete'>
+		...
+```
 
-&nbsp;
-* bootstrap/3.3.7
-* Chart.js/2.4.0
+
+
+
+
 
 
 &nbsp;
 ## TODO
-* authorization
 * flash messages
 * auth with email/fb/twitter...
 * vote once: auth/IP/local storage/cookies...

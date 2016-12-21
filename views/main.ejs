@@ -3,10 +3,6 @@
 
 	<div class="container">
 
-	<div class="col-sm-2"></div>
-
-	<div class="col-sm-8">
-
 		<h3> Voting App: View, Vote, Make a Poll </h3>
 		<br />
 
@@ -22,8 +18,6 @@
 		<% polls.forEach((poll) => { %>
 			<li> <a href="/polls/<%= poll.id %>"> <%= poll.title %> </a> </li>
 		<% }); %>
-
-	</div>
 
 	</div><!-- /container -->
 

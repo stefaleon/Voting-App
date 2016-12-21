@@ -57,7 +57,12 @@
 <hr />
 <div class="col-sm-12">
 <br />
-<% if (currentUser) { %>
+<% if (poll.user.username) { %>
+   <br /> <p> Added by: <%= poll.user.username %> </p>
+<% } %>
+<br />
+
+<% if (currentUser && poll.user.id && poll.user.id.equals(currentUser._id) ) { %>
 
     <% if (!deletePoll) { %>
 		<form id='delete'>

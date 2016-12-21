@@ -174,7 +174,7 @@ app.get('/polls/:id', (req, res) => {
 // DESTROY
 //=============================================================
 // delete a poll
-app.delete('/polls/:id', isLoggedIn, (req, res) => {
+app.delete('/polls/:id', checkAuthorization, (req, res) => {
 	Poll.findByIdAndRemove(req.params.id, (err) => {
 		if (err) {
 			console.log(err);
@@ -237,6 +237,30 @@ function isLoggedIn(req, res, next) {
 	}
 	res.redirect('/login');
 }
+
+// authorization checking middleware
+// applicable on deleting polls created by the logged-in user
+function checkAuthorization(req, res, next) {
+	// if user is authenticated (logged-in)
+	if (req.isAuthenticated()) {
+		// find the poll to check for authorization as well
+		Poll.findById(req.params.id, (err, foundPoll) => {
+			if (err) {
+				res.redirect('back');
+			} else {
+				// if current user is the one who added the poll
+				if (foundPoll.user.id && foundPoll.user.id.equals(req.user._id)) {
+					next();
+				} else {
+					res.redirect('back');
+				}
+			}
+		});
+	} else {
+		res.redirect('back');
+	}
+}
+
 
 
 app.listen(PORT, process.env.IP, () => {
