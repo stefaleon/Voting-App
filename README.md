@@ -1,4 +1,7 @@
-## Voting App v.1.0.1
+## Voting App v.1.0.2
+
+
+## 1.0.1
 #### Configure *mongoose* and models
 
 * Install *mongoose*, require it, set *dbURL* and connect.
@@ -175,6 +178,75 @@ app.get('/polls/:id', (req, res) => {
 });
 ```
 
+## 1.0.2
+#### Add the delete route
+
+* Install *method-override*, require and use it.
+
+```
+"method-override": "^2.3.7"
+```
+```
+const methodOverride = require('method-override');
+```
+```
+app.use(methodOverride('_method'));
+```
+
+
+* Add the delete route.
+
+```
+app.delete('/polls/:id', (req, res) => {
+	Poll.findByIdAndRemove(req.params.id, (err) => {
+		if (err) {
+			console.log(err);
+			res.redirect('/polls/' + req.params.id);
+		} else {
+			console.log('Remove Successful!');
+			res.redirect('/polls');
+		}
+	});
+});
+```
+#### Add a two-step delete button
+* A *delete* button is added in *views/polls/show.ejs*. Logic for a second step confirmation after the first button press is included.
+
+```
+	<% if (!deletePoll) { %>
+		<form id='delete'>
+			<button name="deletePushed" value="deletePoll" class="btn btn-danger">
+				Delete "<%= poll.title %>"
+			</button>
+		</form>
+	<% } else { %>
+		<form id='delete' action='/polls/<%= poll._id %>?_method=DELETE' method='POST'>
+			<button  class="btn btn-danger">
+				Confirm Deletion of "<%= poll.title %>"
+			</button>
+		</form>
+	<% } %>
+```
+
+* The required property passing logic is added in the *"show one poll"* route.
+
+```
+			...
+			// ask for another confirmation in case of request to delete the poll
+			if (req.query.deletePushed === 'deletePoll') {
+				deletePoll = true;
+			} else {
+				deletePoll = false;
+			}
+
+			// eventually show poll
+			res.render('polls/show', {poll, customOption, deletePoll});
+		}
+	});
+});
+```
+
+
 
 &nbsp;
 
@@ -201,6 +273,7 @@ Authenticated users can
 * body-parser  
 
 * mongoose
+* method-override
 
 
 * bootstrap/3.3.7

@@ -6,65 +6,82 @@
 
 <div class="col-sm-6">
     <canvas id="myChart" width="400" height="400"></canvas>
-</div>   
+</div>
 
 <div class="col-sm-4">
-		
-	<h2> <%= poll.title %> </h2>	
+
+	<h2> <%= poll.title %> </h2>
 
 	<hr />
 
 	<% poll.options.forEach((option) => { %>
-		<p> 		    	
+		<p>
 	    	<span id="optionSpan">
 	    		<%= option.opName %>
 	    	</span>
 	    	 has been voted <%= option.opVotes %> times
 	   	</p>
-	<% }); %>	
+	<% }); %>
 
 	<hr />
-	<% if (customOption) { %>		
+	<% if (customOption) { %>
 		<h3>Cast a vote for...</h3>
 		<form>
-			<input name="newOptionNameEntered" 
+			<input name="newOptionNameEntered"
 				placeholder="custom option" class="btn btn-default" id="voteSelect" />
-			<input type="submit" class="btn btn-success voteInput" value="Submit Vote"> 			
+			<input type="submit" class="btn btn-success voteInput" value="Submit Vote">
 	    </form>
 
 	<% } else { %>
 		<form>
 			<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
 				<option disabled selected>Cast a vote for...</option>
-				<% poll.options.forEach((option) => { %>			
+				<% poll.options.forEach((option) => { %>
 		  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
 				<% }); %>
-				<option value="newOption">Add a new option</option>				
-				<input type="submit" class="btn btn-success voteInput"> 
+				<option value="newOption">Add a new option</option>
+				<input type="submit" class="btn btn-success voteInput">
 			</select>
 	    </form>
-	<% } %>	
+	<% } %>
 
 </div>
 
 <div class="col-sm-1"></div>
 
-	
+<hr />
+<div class="col-sm-12">
+<br />
+    <% if (!deletePoll) { %>
+		<form id='delete'>
+			<button name="deletePushed" value="deletePoll" class="btn btn-danger">
+				Delete "<%= poll.title %>"
+			</button>
+		</form>
+	<% } else { %>
+		<form id='delete' action='/polls/<%= poll._id %>?_method=DELETE' method='POST'>
+			<button  class="btn btn-danger">
+				Confirm Deletion of "<%= poll.title %>"
+			</button>
+		</form>
+	<% } %>
+</div>
+
 </div> <!-- /container -->
 
 <script>
     // Random Hex Color Code Generator in JavaScript
     // Paul Irish, alman, nlogax, and temp01
     // 16777215 == ffffff in decimal
-    // source: https://www.paulirish.com/2009/random-hex-color-code-snippets/ 
-    function randomHexColorCodeGenerator(){        
+    // source: https://www.paulirish.com/2009/random-hex-color-code-snippets/
+    function randomHexColorCodeGenerator(){
         return '#'+Math.floor(Math.random()*16777215).toString(16);
     }
 
     // get the poll options from the "poll" object passed by the server
     var pollOptions = <%- JSON.stringify(poll.options) %>
     console.log(pollOptions);
-        
+
     // prepare the chart data
     var labels = [];
     var votes = [];
@@ -78,8 +95,8 @@
         borderColor.push(randomHexColorCodeGenerator());
     });
     console.log(backgroundColor);
-    
-    // instantiate a bar chart    
+
+    // instantiate a bar chart
     var ctx = document.getElementById("myChart");
     var pollChart = new Chart(ctx, {
         type:'bar',
@@ -107,5 +124,3 @@
 
 
 <% include ../partials/footer %>
-
-	

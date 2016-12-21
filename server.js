@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
 const dbURL = process.env.dbURL || 'mongodb://localhost/polls';
+const methodOverride = require('method-override');
 
 const User = require('./models/user');
 const Poll = require('./models/poll');
@@ -17,7 +18,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
-
+app.use(methodOverride('_method'));
 
 
 // ROUTES
@@ -127,8 +128,31 @@ app.get('/polls/:id', (req, res) => {
 				poll.save();
 			}
 
+			// ask for another confirmation in case of request to delete the poll
+			if (req.query.deletePushed === 'deletePoll') {
+				deletePoll = true;
+			} else {
+				deletePoll = false;
+			}
+
 			// eventually show poll
-			res.render('polls/show', {poll, customOption});
+			res.render('polls/show', {poll, customOption, deletePoll});
+		}
+	});
+});
+
+
+// DESTROY
+//=============================================================
+// delete a poll
+app.delete('/polls/:id', (req, res) => {
+	Poll.findByIdAndRemove(req.params.id, (err) => {
+		if (err) {
+			console.log(err);
+			res.redirect('/polls/' + req.params.id);
+		} else {
+			console.log('Remove Successful!');
+			res.redirect('/polls');
 		}
 	});
 });
