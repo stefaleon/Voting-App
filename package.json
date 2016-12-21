@@ -1,6 +1,6 @@
 {
   "name": "voting-app",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,11 @@
     "body-parser": "^1.15.2",
     "ejs": "^2.5.5",
     "express": "^4.14.0",
+    "express-session": "^1.14.2",
     "method-override": "^2.3.7",
-    "mongoose": "^4.7.4"
+    "mongoose": "^4.7.4",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.0.0"
   }
 }

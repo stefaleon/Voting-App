@@ -7,6 +7,11 @@ const mongoose = require('mongoose');
 const dbURL = process.env.dbURL || 'mongodb://localhost/polls';
 const methodOverride = require('method-override');
 
+const SECRET = process.env.SECRET || 'my secret combination';
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const passportLocalMongoose = require('passport-local-mongoose');
+
 const User = require('./models/user');
 const Poll = require('./models/poll');
 
@@ -19,6 +24,25 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
+
+// auth setup
+app.use(require('express-session')({
+	secret: SECRET,
+	resave: false,
+	saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// passport's "req.user" contains the authenticated user
+// middleware for passing the current user to the views
+app.use((req, res, next) => {
+	res.locals.currentUser = req.user;
+	next();
+});
 
 
 // ROUTES
@@ -156,6 +180,50 @@ app.delete('/polls/:id', (req, res) => {
 		}
 	});
 });
+
+
+// auth routes
+//=============================================================
+
+// new user form
+app.get('/signup', (req, res) => {
+	res.render('auth/register');
+});
+
+// CREATE a user
+app.post('/signup', (req, res) => {
+	var newUser = new User({username: req.body.username});
+	// register method hashes the password
+	User.register(newUser, req.body.password, (err, user) => {
+		if (err) {
+			console.log(err);
+			return res.render('auth/register');
+		}
+		// if no error occurs, local strategy authentication takes place
+		passport.authenticate('local')(req, res, () => {
+			res.redirect('/');
+		});
+	});
+});
+
+// login form
+app.get('/login', (req, res) => {
+	res.render('auth/login');
+});
+
+// user login
+app.post('/login', passport.authenticate('local', {
+	successRedirect: '/',
+	failureRedirect: '/login'
+}), (req, res) => {
+});
+
+// user logout
+app.get('/logout', (req, res) => {
+	req.logout();
+	res.redirect('/');
+});
+
 
 
 app.listen(PORT, process.env.IP, () => {

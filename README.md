@@ -1,4 +1,4 @@
-## Voting App v.1.0.2
+## Voting App v.1.0.3
 
 
 ## 1.0.1
@@ -246,7 +246,149 @@ app.delete('/polls/:id', (req, res) => {
 });
 ```
 
+## 1.0.3
+#### Authentication setup
 
+* Install and use *express-session*.
+
+```
+"express-session": "^1.14.2"
+```
+```
+const SECRET = process.env.SECRET || 'my secret combination';
+```
+```
+app.use(require('express-session')({
+	secret: SECRET,
+	resave: false,
+	saveUninitialized: false
+}));
+```
+
+* Install, require and use *passport*, *passport-local* and *passport-local-mongoose*.
+
+```
+"passport": "^0.3.2",
+"passport-local": "^1.0.0",
+"passport-local-mongoose": "^4.0.0"
+```
+```
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const passportLocalMongoose = require('passport-local-mongoose');
+```
+```
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+```
+
+* Make the *passport-local-mongoose* methods available for the *User* model.
+
+```
+const mongoose = require('mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
+
+const userSchema = new mongoose.Schema({
+    username:  {
+		...
+		...
+
+userSchema.plugin(passportLocalMongoose);
+	...
+```
+
+* Eventually, pass the authenticated user, provided by *passport* via *req.user*, to the views as *"currentUser"* via *res.locals* provided by *Express*.
+
+```
+// passport's "req.user" contains the authenticated user
+// middleware for passing the current user to the views
+app.use((req, res, next) => {
+	res.locals.currentUser = req.user;
+	next();
+});
+```
+
+#### Configure the authentication views
+* Add the *Sign Up* and *Log In* views in *views/auth/register.ejs* and *views/auth/login.ejs* respectively.
+```
+	<form action='/signup' method='post'>
+		<div class='form-group'>
+			<input type='text' required name='username' pattern=".{4,}"
+				placeholder="username, 4 chars minimum " class='form-control'/>
+		</div>
+		<div class='form-group'>
+			<input type='password' required name='password' pattern=".{4,}"
+				placeholder="password, 4 chars minimum" class='form-control' />
+		</div>
+		<div class="form-group">
+			<input type="submit" value="Register" class="btn btn-success btn-block"/>
+		</div>
+	</form>
+```
+```
+	<form action='/login' method='post'>
+		<div class='form-group'>
+			<input type='text' name='username' placeholder="username" class='form-control'/>
+		</div>
+		<div class='form-group'>
+			<input type='password' name='password' placeholder="password" class='form-control' />
+		</div>
+		<div class="form-group">
+			<input type="submit" value="Login" class="btn btn-success btn-block"/>
+		</div>
+	</form>
+```
+
+#### Configure the authentication routes
+
+* Eventually, add the authentication routes.
+
+```
+// auth routes
+//=============================================================
+
+// new user form
+app.get('/signup', (req, res) => {
+	res.render('auth/register');
+});
+
+// CREATE a user
+app.post('/signup', (req, res) => {
+	var newUser = new User({username: req.body.username});
+	// register method hashes the password
+	User.register(newUser, req.body.password, (err, user) => {
+		if (err) {
+			console.log(err);
+			return res.render('auth/register');
+		}
+		// if no error occurs, local strategy authentication takes place
+		passport.authenticate('local')(req, res, () => {
+			res.redirect('/');
+		});
+	});
+});
+
+// login form
+app.get('/login', (req, res) => {
+	res.render('auth/login');
+});
+
+// user login
+app.post('/login', passport.authenticate('local', {
+	successRedirect: '/',
+	failureRedirect: '/login'
+}), (req, res) => {
+});
+
+// user logout
+app.get('/logout', (req, res) => {
+	req.logout();
+	res.redirect('/');
+});
+```
 
 &nbsp;
 
@@ -275,6 +417,10 @@ Authenticated users can
 * mongoose
 * method-override
 
+* express-session
+* passport
+* passport-local
+* passport-local-mongoose
 
 * bootstrap/3.3.7
 * Chart.js/2.4.0
