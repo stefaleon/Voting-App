@@ -624,10 +624,20 @@ app.delete('/polls/:id', checkAuthorization, (req, res) => {
 		...
 ```
 
+#### Require input for custom poll option
+* An addition to older code: In *views/polls/show.ejs* the input for the custom option needs to be set to *required*, so that options without content are not allowed to be added in the poll.
 
-
-
-
+```
+...
+<% if (customOption) { %>
+	<h3>Cast a vote for...</h3>
+	<form>
+		<input name="newOptionNameEntered" required
+			placeholder="custom option" class="btn btn-default" id="voteSelect" />
+		<input type="submit" class="btn btn-success voteInput" value="Submit Vote">
+	</form>
+	...
+```
 
 
 &nbsp;

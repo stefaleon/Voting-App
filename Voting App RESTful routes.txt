@@ -1,15 +1,28 @@
 RESTful routes
 
-CRUD		name		url		verb		description
-==========================================================
-CREATE		CREATE   	/polls		POST		create new poll
-READ		INDEX		/polls		GET		display all polls
-READ		SHOW		/polls/:id 	GET		shows a specific poll
-READ		INDEX		/mypolls		GET		display current user's polls
+POLLS
+CRUD		url		verb		description
+=========================================================
+CREATE		/polls		POST		create new poll
+READ		/polls		GET		display all polls
+READ		/polls/:id 	GET		shows a specific poll
+READ		/mypolls		GET		display current user's polls
+DESTROY		/polls/:id		DELETE		delete a poll
+
+USERS
+CRUD		url		verb		description
+=========================================================
+CREATE		/signup		POST		create new user
 
 
-		NEW		/newpoll		GET		show form to create new poll
-
+OTHER		url		verb		description
+=========================================================
+ROOT		/		GET		redirect to /polls
+NEW		/newpoll		GET		show form to create new poll
+NEW		/signup		GET		show form to create new user
+SHOW		/login		GET		show form to login
+LOGIN		/login		POST		user login
+LOGOUT		/logout		GET		user logout
 
 
 
