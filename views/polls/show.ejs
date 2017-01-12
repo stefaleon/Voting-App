@@ -26,29 +26,37 @@
         <hr />
     <% } %>
 
+    <% if (alreadyVoted) { %>
 
-	<% if (customOption) { %>
-		<h3>Cast a vote for...</h3>
-		<form>
-			<input name="newOptionNameEntered" required
-				placeholder="custom option" class="btn btn-default" id="voteSelect" />
-			<input type="submit" class="btn btn-success voteInput" value="Submit Vote">
-	    </form>
+        <h3> Thank you for voting
+            <br /> in this poll! </h3>
 
-	<% } else { %>
-		<form>
-			<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
-				<option disabled selected>Cast a vote for...</option>
-				<% poll.options.forEach((option) => { %>
-		  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
-				<% }); %>
-                <% if (currentUser) { %>
-				    <option value="newOption">Add a new option</option>
-                <% } %>
-				<input type="submit" class="btn btn-success voteInput">
-			</select>
-	    </form>
-	<% } %>
+    <% } else { %>
+
+    	<% if (customOption) { %>
+    		<h3>Cast a vote for...</h3>
+    		<form>
+    			<input name="newOptionNameEntered" required
+    				placeholder="custom option" class="btn btn-default" id="voteSelect" />
+    			<input type="submit" class="btn btn-success voteInput" value="Submit Vote">
+    	    </form>
+
+    	<% } else { %>
+    		<form>
+    			<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
+    				<option disabled selected>Cast a vote for...</option>
+    				<% poll.options.forEach((option) => { %>
+    		  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
+    				<% }); %>
+                    <% if (currentUser) { %>
+    				    <option value="newOption">Add a new option</option>
+                    <% } %>
+    				<input type="submit" class="btn btn-success voteInput">
+    			</select>
+    	    </form>
+    	<% } %>
+
+    <% } %>
 
 </div>
 
@@ -57,7 +65,6 @@
 <hr />
 <div class="col-sm-12">
 <br />
-<p>user-ip is: <%= ip %></p>
 <% if (poll.user.username) { %>
    <br /> <p> Added by: <%= poll.user.username %> </p>
 <% } %>

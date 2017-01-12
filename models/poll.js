@@ -24,7 +24,8 @@ const pollSchema = new mongoose.Schema({
 			type: Number,
 			default: 0
 		}
-	}]
+	}],
+	IPs: [String]
 });
 
 const Poll = mongoose.model('Poll', pollSchema);

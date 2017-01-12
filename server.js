@@ -123,9 +123,8 @@ app.get('/mypolls', isLoggedIn, (req, res) => {
 // show one poll
 app.get('/polls/:id', (req, res) => {
 	var customOption = false;	// used for adding a custom option in the poll
-
-	var ip = req.ip;
-
+	var alreadyVoted = false;
+	var currentIP = req.ip;		// used for dissalowing multiple votes
 	// find the poll
 	Poll.findById(req.params.id, (err, poll) => {
 		if (err) {
@@ -133,34 +132,58 @@ app.get('/polls/:id', (req, res) => {
 			res.sendStatus(404);
 		} else {		//if a poll is found
 
-				console.log('ip is:', ip);
-
-			// when a vote is cast, update vote count
-			// if req.query.choice is a valid opId, then increase votes by one
-			poll.options.forEach((option) => {
-				if (req.query.choice === option.opId) {
-					option.opVotes += 1;
-					poll.save();
-				}
-			});
-
-			// in case the new option choice is selected
-			if (req.query.choice === 'newOption') {
-				// show a new option add form instead of the dropdown in show.ejs
-				customOption = true;
-			} else {
-				customOption = false;
-			}
-
-			// if a new option is requested, add it to the poll options array
-			if (req.query.newOptionNameEntered)	{
-				poll.options.push({
-					opId: (poll.options.length + 1).toString(),
-					opName: req.query.newOptionNameEntered,
-					opVotes: 1
+			console.log('Current IP is:', currentIP);
+			// check in poll's "IPs" field if the current IP is matched
+			if (poll.IPs) {
+				poll.IPs.forEach((ip) => {
+					if (ip === currentIP) {
+						alreadyVoted = true;
+					}
 				});
-				poll.save();
 			}
+
+			// if it has not already been voted...
+			if (!alreadyVoted) {
+
+					// when a vote is cast, update vote count
+					// if req.query.choice is a valid opId, then increase votes by one
+					poll.options.forEach((option) => {
+						if (req.query.choice === option.opId) {
+							option.opVotes += 1;
+							// add current IP to the IPs field array for this poll
+							poll.IPs.push(currentIP);
+							// avoid showing the voting form in the next render
+							alreadyVoted = true;
+							// save poll in db
+							poll.save();
+						}
+					});
+
+					// in case the new option choice is selected
+					if (req.query.choice === 'newOption') {
+						// show a new option add form instead of the dropdown in show.ejs
+						customOption = true;
+					} else {
+						customOption = false;
+					}
+
+					// if a new option is requested, add it to the poll options array
+					if (req.query.newOptionNameEntered)	{
+						poll.options.push({
+							opId: (poll.options.length + 1).toString(),
+							opName: req.query.newOptionNameEntered,
+							opVotes: 1
+						});
+						// add current IP to the IPs field array for this poll
+						poll.IPs.push(currentIP);
+						// avoid showing the voting form in the next render
+						alreadyVoted = true;
+						// save poll in db
+						poll.save();
+					}
+
+			} // end of already voted checking
+
 
 			// ask for another confirmation in case of request to delete the poll
 			if (req.query.deletePushed === 'deletePoll') {
@@ -170,7 +193,7 @@ app.get('/polls/:id', (req, res) => {
 			}
 
 			// eventually show poll
-			res.render('polls/show', {ip, poll, customOption, deletePoll});
+			res.render('polls/show', {alreadyVoted, currentIP, poll, customOption, deletePoll});
 		}
 	});
 });
