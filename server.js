@@ -18,7 +18,7 @@ const Poll = require('./models/poll');
 mongoose.connect(dbURL);
 
 
-
+app.enable('trust proxy');
 app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'));
@@ -123,12 +123,17 @@ app.get('/mypolls', isLoggedIn, (req, res) => {
 // show one poll
 app.get('/polls/:id', (req, res) => {
 	var customOption = false;	// used for adding a custom option in the poll
+
+	var ip = req.ip;
+
 	// find the poll
 	Poll.findById(req.params.id, (err, poll) => {
 		if (err) {
 			console.log(err);
 			res.sendStatus(404);
 		} else {		//if a poll is found
+
+				console.log('ip is:', ip);
 
 			// when a vote is cast, update vote count
 			// if req.query.choice is a valid opId, then increase votes by one
@@ -165,7 +170,7 @@ app.get('/polls/:id', (req, res) => {
 			}
 
 			// eventually show poll
-			res.render('polls/show', {poll, customOption, deletePoll});
+			res.render('polls/show', {ip, poll, customOption, deletePoll});
 		}
 	});
 });
