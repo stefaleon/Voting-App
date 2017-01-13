@@ -1,4 +1,5 @@
-## Voting App v.2.0.1
+## Voting App v.2.0.2
+
 &nbsp;
 
 ## User Stories
@@ -21,9 +22,33 @@ Discourage multiple votes
 * Voting more than once in each poll is disallowed by checking the IP address of the user.
 
 
+&nbsp;
+
+## Current Stack
+
+* Express
+* EJS
+* body-parser  
+
+&nbsp;
+* mongoose
+* method-override
+
+&nbsp;
+* express-session
+* passport
+* passport-local
+* passport-local-mongoose
+
+&nbsp;
+* bootstrap/3.3.7
+* Chart.js/2.4.0
+
 
 
 &nbsp;
+
+## 2.0.1
 ## Discourage multiple votes
 
 #### Disallow voting more than once in each poll by checking the IP address of the user
@@ -157,4 +182,37 @@ app.get('/polls/:id', (req, res) => {
 		</form>
 	<% } %>
 <% } %>
+```
+
+## 2.0.2
+#### Style the app
+* Style the poll lists in *views/main.ejs* and *views/mypolls.ejs* with Bootstrap Listgroup items.
+```
+<div class="list-group">
+	<% polls.forEach((poll) => { %>
+		<a href="/polls/<%= poll.id %>" class="list-group-item"> <%= poll.title %> </a>
+	<% }); %>
+</div>
+```
+
+* Fix more issues for the overall app look, shadow of main title is the basic characteristic of each page.
+```
+.shadowtitletext {
+    color: white;
+    text-shadow: 1px 1px 2px black, 0 0 25px green, 0 0 5px darkgreen;    
+	margin: 1.2em;
+}
+```
+```
+<div class="well wellmain">
+	<h3 class="shadowtitletext"> Voting App: View, Vote, Make a Poll </h3>
+	...
+```
+```
+<div class="col-sm-6">
+	<h2 class="shadowtitletext">Login</h2>
+	...
+```
+```
+etc
 ```

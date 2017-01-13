@@ -1,93 +1,90 @@
 <% include ../partials/header %>
 
-<div class="container text-center">
+<div class="container well wellshow  text-center">
 
-<div class="col-sm-1"></div>
+    <div class="col-sm-1"></div>
 
-<div class="col-sm-6">
-    <canvas id="myChart" width="400" height="400"></canvas>
-</div>
+    <div class="col-sm-6">
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
 
-<div class="col-sm-4">
+    <div class="col-sm-4">
 
-	<h2> <%= poll.title %> </h2>
+    	<h2 class="shadowtitletext"> <%= poll.title %> </h2>
 
-	<hr />
+    	<% if (currentUser) { %>
+        	<% poll.options.forEach((option) => { %>
+        		<p>
+        	    	<span id="optionSpan">
+        	    		<%= option.opName %>
+        	    	</span>
+        	    	 has been voted <%= option.opVotes %> times
+        	   	</p>
+        	<% }); %>
+            <hr />
+        <% } %>
 
-    <% if (currentUser) { %>
-    	<% poll.options.forEach((option) => { %>
-    		<p>
-    	    	<span id="optionSpan">
-    	    		<%= option.opName %>
-    	    	</span>
-    	    	 has been voted <%= option.opVotes %> times
-    	   	</p>
-    	<% }); %>
-        <hr />
-    <% } %>
+        <% if (alreadyVoted) { %>
 
-    <% if (alreadyVoted) { %>
+            <h3> Thank you for voting
+                <br /> in this poll! </h3>
 
-        <h3> Thank you for voting
-            <br /> in this poll! </h3>
+        <% } else { %>
 
-    <% } else { %>
+        	<% if (customOption) { %>
+        		<h3>Cast a vote for...</h3>
+        		<form>
+        			<input name="newOptionNameEntered" required
+        				placeholder="custom option" class="btn btn-default" id="voteSelect" />
+        			<input type="submit" class="btn btn-success voteInput" value="Submit Vote">
+        	    </form>
 
-    	<% if (customOption) { %>
-    		<h3>Cast a vote for...</h3>
-    		<form>
-    			<input name="newOptionNameEntered" required
-    				placeholder="custom option" class="btn btn-default" id="voteSelect" />
-    			<input type="submit" class="btn btn-success voteInput" value="Submit Vote">
-    	    </form>
+        	<% } else { %>
+        		<form>
+        			<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
+        				<option disabled selected>Cast a vote for...</option>
+        				<% poll.options.forEach((option) => { %>
+        		  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
+        				<% }); %>
+                        <% if (currentUser) { %>
+        				    <option value="newOption">Add a new option</option>
+                        <% } %>
+        				<input type="submit" class="btn btn-success voteInput">
+        			</select>
+        	    </form>
+        	<% } %>
 
-    	<% } else { %>
-    		<form>
-    			<select name="choice" class="btn btn-default dropdown-toggle" id="voteSelect">
-    				<option disabled selected>Cast a vote for...</option>
-    				<% poll.options.forEach((option) => { %>
-    		  			<option value="<%= option.opId %>"> <%= option.opName %> </option>
-    				<% }); %>
-                    <% if (currentUser) { %>
-    				    <option value="newOption">Add a new option</option>
-                    <% } %>
-    				<input type="submit" class="btn btn-success voteInput">
-    			</select>
-    	    </form>
-    	<% } %>
+        <% } %>
 
-    <% } %>
+    </div>
 
-</div>
+    <div class="col-sm-1"></div>
 
-<div class="col-sm-1"></div>
+    <div class="col-sm-12">
 
-<hr />
-<div class="col-sm-12">
-<br />
-<% if (poll.user.username) { %>
-   <br /> <p> Added by: <%= poll.user.username %> </p>
-<% } %>
-<br />
+        <% if (poll.user.username) { %>
+            <br /> <p> Added by: <%= poll.user.username %> </p>
+       <% } %>
+       <br />
 
-<% if (currentUser && poll.user.id && poll.user.id.equals(currentUser._id) ) { %>
+       <% if (currentUser && poll.user.id && poll.user.id.equals(currentUser._id) ) { %>
 
-    <% if (!deletePoll) { %>
-		<form id='delete'>
-			<button name="deletePushed" value="deletePoll" class="btn btn-danger">
-				Delete "<%= poll.title %>"
-			</button>
-		</form>
-	<% } else { %>
-		<form id='delete' action='/polls/<%= poll._id %>?_method=DELETE' method='POST'>
-			<button  class="btn btn-danger">
-				Confirm Deletion of "<%= poll.title %>"
-			</button>
-		</form>
-	<% } %>
+            <% if (!deletePoll) { %>
+        		<form id='delete'>
+        			<button name="deletePushed" value="deletePoll" class="btn btn-danger">
+        				Delete "<%= poll.title %>"
+        			</button>
+        		</form>
+        	<% } else { %>
+        		<form id='delete' action='/polls/<%= poll._id %>?_method=DELETE' method='POST'>
+        			<button  class="btn btn-danger">
+        				Confirm Deletion of "<%= poll.title %>"
+        			</button>
+        		</form>
+    	    <% } %>
 
-<% } %>
-</div>
+        <% } %>
+    </div>
 
 </div> <!-- /container -->
 

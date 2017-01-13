@@ -2,21 +2,21 @@
 
 <div class="container text-center">
 
-	<h2>Add a Poll</h2>
+	<h2 class="shadowtitletext">Add a Poll</h2>
 
 	<form action="/polls" method="POST">
 		<div class="form-group">
 			<input type="text" name="pTitle" class="form-control"
 				placeholder="poll title" required/>
-		</div>			
+		</div>
 		<div class="form-group ">
 			<label>Enter poll options in the textarea below. Separate with new line.</label>
-			<textarea type="text" rows=10 name="pOptions" 
-				class="form-control" required></textarea>	
-		</div>		
+			<textarea type="text" rows=10 name="pOptions"
+				class="form-control" required></textarea>
+		</div>
 		<div class="form-group">
 			<input type="submit" value="Add" class="btn btn-success btn-block"/>
-		</div>		
+		</div>
 	</form>
 	<hr />
 	<a href='/polls'> Go Back </a>

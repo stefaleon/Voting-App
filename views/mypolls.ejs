@@ -1,23 +1,24 @@
 <% include partials/header %>
 
 
-	<div class="container">
+	<div class="container text-center">
 
-		<h3> My Polls </h3>
-		<br />
-		
-		<p> <a href="/newpoll">Make a new poll. </a> </p>
-		<hr />
-		<% mypolls.forEach((poll) => { %>
-			<li> <a href="/polls/<%= poll.id %>"> <%= poll.title %> </a> </li>
-		<% }); %>			
-		
-		
-		<br />
-		<br /><a href='/'>See all polls.</a>
+		<div class="well wellmain">
+			<h3 class="shadowtitletext"> My Polls </h3>
+			<p> <a href="/newpoll">Make a new poll. </a> </p>
+		</div>
+
+		<div class="list-group">
+			<% mypolls.forEach((poll) => { %>
+				<a href="/polls/<%= poll.id %>" class="list-group-item"> <%= poll.title %> </a>
+			<% }); %>
+		</div>
+
+		<div class="well wellmain">
+			<br /><a href='/'>See all polls.</a>
+		</div>
 
 	</div>
 
 
 <% include partials/footer %>
-

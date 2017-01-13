@@ -12,6 +12,24 @@
   font-size: 1.1em;
 }
 
+.wellmain {
+    max-width: 500px;
+    margin: auto;
+    background: #fff;
+}
+
+.shadowtitletext {
+    color: white;
+    text-shadow: 1px 1px 2px black, 0 0 25px green, 0 0 5px darkgreen;
+    margin: 1.2em; 
+}
+
+
+.list-group {
+    max-width: 500px;
+    margin: auto;
+}
+
  /* option name in show.ejs */
 #optionSpan {
 	font-size: 1.6em;
@@ -26,5 +44,5 @@
 
 footer {
 	font-size: 0.8em;
+    text-align: center;
 }
-

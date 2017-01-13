@@ -1,25 +1,31 @@
 <% include partials/header %>
 
 
-	<div class="container">
 
-		<h3> Voting App: View, Vote, Make a Poll </h3>
-		<br />
 
-		<% if (!currentUser) { %>
-		<p> Select a poll to see the results and vote, or <a href="/login">sign-in</a> to make a new poll. </p>
-		<% } %>
-		<% if (currentUser) { %>
-		<p> Select a poll to see the results and vote, or <a href="/newpoll"> make a new poll </a>. </p>
-		<% } %>
+		<div class="well wellmain">
 
-		<hr />
+			<h3 class="shadowtitletext"> Voting App: View, Vote, Make a Poll </h3>
+			<br />
 
-		<% polls.forEach((poll) => { %>
-			<li> <a href="/polls/<%= poll.id %>"> <%= poll.title %> </a> </li>
-		<% }); %>
+			<% if (!currentUser) { %>
+			<p> Select a poll to see the results and vote, or <a href="/login">sign-in</a> to make a new poll. </p>
+			<% } %>
+			<% if (currentUser) { %>
+			<p> Select a poll to see the results and vote, or <a href="/newpoll"> make a new poll </a>. </p>
+			<% } %>
 
-	</div><!-- /container -->
+		</div>
+
+
+
+		<div class="list-group">
+			<% polls.forEach((poll) => { %>
+				<a href="/polls/<%= poll.id %>" class="list-group-item"> <%= poll.title %> </a>
+			<% }); %>
+		</div>
+
+
 
 
 <% include partials/footer %>
